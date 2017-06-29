@@ -1,0 +1,26 @@
+
+#login-banner{
+    margin: 0;
+    padding-top: 32px;
+    padding-bottom: 32px;
+}
+
+#login-container{
+    padding: 30px;
+}
+
+.login-btn{
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+.name-offset{
+    margin-top: 16px;
+}
+
+.staff-private-field{
+    font-size: 12px;
+    margin-left: 16px;
+    font-weight: normal;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+}

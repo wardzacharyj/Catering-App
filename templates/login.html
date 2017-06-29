@@ -1,10 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/material.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/mycss.css') }}">
+    <script type="text/javascript" src="{{ url_for('static',filename='css/material.min.js') }}"></script>
+
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Login</title>
 </head>
-<body>
+<body class="mdl-color--green-100">
+
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--4-col"></div>
+        <div class="mdl-cell mdl-cell--4-col  mdl-typography--text-center">
+            <div class="mdl-card mdl-shadow--3dp">
+                <form action="" method="post">
+                    <h3 id="login-banner" class="mdl-typography--display-2 mdl-color--primary mdl-color-text--white">
+                        Cater Gator Login
+                    </h3>
+
+                    <div id="login-container">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                            <input class="mdl-textfield__input" type="text" id="username" name="username">
+                            <label class="mdl-textfield__label" for="sample3">Username</label>
+                        </div>
+
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                            <input class="mdl-textfield__input" type="password" id="password" name="password">
+                            <label class="mdl-textfield__label" for="sample3">Password</label>
+                        </div>
+                    </div>
+
+                    <div class="mdl-grid" style="float: right">
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--white login-btn">Sign In</button>
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored login-btn">Sign Up</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="mdl-cell mdl-cell--4-col"></div>
+    </div>
 
 </body>
 </html>

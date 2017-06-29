@@ -1,0 +1,128 @@
+<html>
+    <head>
+        <!-- CSS Resources -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/material.min.js') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/material.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/mycss.css') }}">
+
+        <!-- Material Design icon font -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    </head>
+    <body>
+
+        <!-- The drawer is always open in large screens. The header is always shown, even in small screens. -->
+        <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header mdl-color--teal-100">
+
+
+            <!-- Header -->
+            <header class="mdl-layout__header">
+
+                <div class="mdl-layout__header-row">
+
+                    <!-- Add spacer, to align navigation to the right -->
+                    <div class="mdl-layout-spacer"></div>
+
+                    <!-- Navigation -->
+                    <nav class="mdl-navigation">
+                        <a class="mdl-navigation__link" href="">Logout</a>
+                    </nav>
+
+                </div>
+
+            </header>
+
+
+            <!-- Links in drawer -->
+            <div class="mdl-layout__drawer">
+                <span class="mdl-layout-title">{{ info.user_type }}</span>
+                <nav class="mdl-navigation">
+
+                    {% if "owner" in info.user_type %}
+                        <!-- Owner -->
+                        <a class="mdl-navigation__link" href="">Staff</a>
+                        <a class="mdl-navigation__link" href="">Events</a>
+                    {% elif "staff" in info.user_type%}
+                        <!-- Staff -->
+                        <a class="mdl-navigation__link" href="">Assigned Events</a>
+                        <a class="mdl-navigation__link" href="">Pending Events</a>
+                    {% else %}
+                        <!-- Customers -->
+                        <a class="mdl-navigation__link" href="">Create Request</a>
+                        <a class="mdl-navigation__link" href="">My Requests</a>
+                    {% endif %}
+                </nav>
+            </div>
+
+
+            <!-- Content Holder -->
+            <main class="mdl-layout__content">
+                <div class="page-content mdl-grid">
+
+                    <!-- Page Offset -->
+                    <div class="mdl-cell mdl-cell--1-col "></div>
+
+                    <!-- Main Content -->
+                    <div class="mdl-cell mdl-cell--10-col">
+
+                        <!-- Centered Card Content -->
+                        <div style="width: 100%;" class="mdl-card mdl-shadow--2dp">
+
+                            <!-- Main Card List -->
+                            <ul class="mdl-list">
+                                <li class="mdl-list__item">
+                                    <div>
+                                        <span class="mdl-list__item-primary-content">
+                                            <i class="material-icons  mdl-list__item-avatar">person</i>
+                                                <h5 style="margin-top: 16px;">Bryan Cranston</h5>
+                                        </span>
+                                        <span class="mdl-list__item-text-body">
+                                            <div class="mdl-grid--no-spacing">
+                                                <div style="padding-left: 52px"class="mdl-cell mdl-cell--12-col">
+                                                    <h6 class="mdl-typography--body-1">Username</h6>
+                                                    <h6 class="mdl-typography--body-1">Password</h6>
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </li>
+                                <hr>
+                                <li class="mdl-list__item" style="padding: 24px">
+                                    <div>
+                                        <span class="mdl-list__item-primary-content">
+                                            <i class="material-icons  mdl-list__item-avatar">person</i>
+                                                <h5 class="name-offset">Bryan Cranston</h5>
+                                        </span>
+                                        <span class="mdl-list__item-text-body">
+                                            <div class="mdl-grid--no-spacing">
+                                                <div style="padding-left: 52px"class="mdl-cell mdl-cell--12-col">
+                                                    <h6 class="mdl-typography--body-2">
+                                                        Username:
+                                                        <span class="staff-private-field">username123</span>
+
+                                                    </h6>
+
+                                                    <h6 class="mdl-typography--body-2">
+                                                        Password:
+                                                        <span class="staff-private-field">password123</span>
+                                                    </h6>
+
+                                                </div>
+                                            </div>
+                                        </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                    <!-- Page Offset -->
+                    <div class="mdl-cell mdl-cell--1-col "></div>
+
+                </div>
+            </main>
+
+        </div>
+  </body>
+</html>
