@@ -1,21 +1,47 @@
 
+.fill-parent{
+    width: 100%;
+}
+
 #login-banner{
     margin: 0;
     padding-top: 32px;
-    padding-bottom: 32px;
+    padding-bottom: 16px;
 }
 
 #login-container{
     padding: 30px;
 }
 
-.login-btn{
-    margin-right: 10px;
-    margin-bottom: 5px;
+.switch_holder{
+    padding: 16px;
+}
+
+.max-width {
+    width: 100%;
+}
+
+#btn_login {
+    width: 82%;
+}
+
+#btn_signup {
+    width: 82%;
+}
+
+.mdl-grid.center-items {
+  justify-content: center;
 }
 
 .name-offset{
     margin-top: 16px;
+}
+
+.error-message{
+    font-size: 16px;
+    color: #f44336;
+    padding-bottom: 16px;
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
 
 .staff-private-field{

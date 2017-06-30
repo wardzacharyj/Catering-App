@@ -1,9 +1,14 @@
 <html>
     <head>
+
         <!-- CSS Resources -->
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/material.min.js') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/material.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/mycss.css') }}">
+
+        <!-- JS Resources -->
+        <script type="text/javascript" src="{{ url_for('static', filename='stylesheets/material.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static',filename='stylesheets/splash.js') }}"></script>
+
 
         <!-- Material Design icon font -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -25,7 +30,7 @@
 
                     <!-- Navigation -->
                     <nav class="mdl-navigation">
-                        <a class="mdl-navigation__link" href="">Logout</a>
+                        <a class="mdl-navigation__link" href="/logout">Logout</a>
                     </nav>
 
                 </div>
@@ -35,21 +40,31 @@
 
             <!-- Links in drawer -->
             <div class="mdl-layout__drawer">
-                <span class="mdl-layout-title">{{ info.user_type }}</span>
+                <span class="mdl-layout-title">{{ info['name'] }}</span>
                 <nav class="mdl-navigation">
 
-                    {% if "owner" in info.user_type %}
+                    {% if "Owner" in info.user_type %}
                         <!-- Owner -->
+                        <!-- card for new staff creation above list of staff -->
                         <a class="mdl-navigation__link" href="">Staff</a>
+
+                        <!-- one card for pending work events and one for assigned events -->
                         <a class="mdl-navigation__link" href="">Events</a>
-                    {% elif "staff" in info.user_type%}
+
+                    {% elif "Staff" in info.user_type%}
                         <!-- Staff -->
+                        <!-- card for Events signed up for -->
                         <a class="mdl-navigation__link" href="">Assigned Events</a>
-                        <a class="mdl-navigation__link" href="">Pending Events</a>
+
+                        <!-- Card for Events that they could sign up for -->
+                        <a class="mdl-navigation__link" href="">Open Events</a>
                     {% else %}
                         <!-- Customers -->
-                        <a class="mdl-navigation__link" href="">Create Request</a>
-                        <a class="mdl-navigation__link" href="">My Requests</a>
+                        <!-- button for canceling event -->
+                        <a class="mdl-navigation__link" href="">Create Event</a>
+
+                        <!-- My events -->
+                        <a class="mdl-navigation__link" href="">My Events</a>
                     {% endif %}
                 </nav>
             </div>
@@ -57,7 +72,55 @@
 
             <!-- Content Holder -->
             <main class="mdl-layout__content">
-                <div class="page-content mdl-grid">
+                <div class="mdl-grid max-width mdl-color--white mdl-shadow--2dp">
+                    <form action="/create_new_staff" class="max-width" method="post">
+
+                        <h3 class="mdl-card__title">New Staff Entry</h3>
+
+                        <div class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--6-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="staff_name" name="staff_name">
+                                    <label class="mdl-textfield__label" for="staff_name">Name</label>
+                                </div>
+                            </div>
+                            <div class="mdl-cell mdl-cell--6-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="staff_username" name="staff_username">
+                                    <label class="mdl-textfield__label" for="staff_username">Username</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--6-col"></div>
+                            <div class="mdl-cell mdl-cell--6-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="password" id="staff_password" name="staff_password">
+                                    <label class="mdl-textfield__label" for="staff_password">Password</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <ul class=flashes>
+                                {% for message in messages %}
+                                    <li><h6 class="error-message">{{ message }}</h6></li>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
+
+
+                        <div class="mdl-grid" style="float: right; margin-right: 128px;">
+                            <button formaction="/create_new_staff" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Create</button>
+                        </div>
+
+                    </form>
+
+                </div>
+                <div class="page-content mdl-grid center-items">
 
                     <!-- Page Offset -->
                     <div class="mdl-cell mdl-cell--1-col "></div>
@@ -66,53 +129,43 @@
                     <div class="mdl-cell mdl-cell--10-col">
 
                         <!-- Centered Card Content -->
-                        <div style="width: 100%;" class="mdl-card mdl-shadow--2dp">
+                        <div class="mdl-card mdl-shadow--2dp fill-parent">
 
-                            <!-- Main Card List -->
-                            <ul class="mdl-list">
-                                <li class="mdl-list__item">
-                                    <div>
-                                        <span class="mdl-list__item-primary-content">
-                                            <i class="material-icons  mdl-list__item-avatar">person</i>
-                                                <h5 style="margin-top: 16px;">Bryan Cranston</h5>
-                                        </span>
-                                        <span class="mdl-list__item-text-body">
-                                            <div class="mdl-grid--no-spacing">
-                                                <div style="padding-left: 52px"class="mdl-cell mdl-cell--12-col">
-                                                    <h6 class="mdl-typography--body-1">Username</h6>
-                                                    <h6 class="mdl-typography--body-1">Password</h6>
-                                                </div>
+                            <!-- Owner Staff List -->
+                            {% if info['staff_list'] %}
+                                <ul class="mdl-list" style="margin-bottom: 0px; padding-bottom: 0">
+
+                                    {% for staff in info['staff_list'] %}
+                                        <li class="mdl-list__item" style="padding: 24px">
+                                            <div>
+                                                <span class="mdl-list__item-primary-content">
+                                                    <i class="material-icons  mdl-list__item-avatar">person</i>
+                                                    <h5 class="name-offset">{{ staff['name'] }}</h5>
+                                                </span>
+                                                <span class="mdl-list__item-text-body">
+                                                    <div class="mdl-grid--no-spacing">
+                                                        <div style="padding-left: 52px"class="mdl-cell mdl-cell--12-col">
+                                                            <h6 class="mdl-typography--body-2">
+                                                                Username:
+                                                                <span class="staff-private-field">{{ staff['username'] }}</span>
+                                                            </h6>
+                                                            <h6 class="mdl-typography--body-2">
+                                                                Password:
+                                                                <span class="staff-private-field">{{ staff['password'] }}</span>
+                                                            </h6>
+                                                        </div>
+                                                    </div>
+                                                </span>
                                             </div>
-                                        </span>
-                                    </div>
-                                </li>
-                                <hr>
-                                <li class="mdl-list__item" style="padding: 24px">
-                                    <div>
-                                        <span class="mdl-list__item-primary-content">
-                                            <i class="material-icons  mdl-list__item-avatar">person</i>
-                                                <h5 class="name-offset">Bryan Cranston</h5>
-                                        </span>
-                                        <span class="mdl-list__item-text-body">
-                                            <div class="mdl-grid--no-spacing">
-                                                <div style="padding-left: 52px"class="mdl-cell mdl-cell--12-col">
-                                                    <h6 class="mdl-typography--body-2">
-                                                        Username:
-                                                        <span class="staff-private-field">username123</span>
-
-                                                    </h6>
-
-                                                    <h6 class="mdl-typography--body-2">
-                                                        Password:
-                                                        <span class="staff-private-field">password123</span>
-                                                    </h6>
-
-                                                </div>
-                                            </div>
-                                        </span>
-                                    </div>
-                                </li>
-                            </ul>
+                                        </li>
+                                        {% if info['staff_list'][-1] != staff  %}
+                                        <hr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <h6 style="padding-top: 55px; font-size: 16px;" class="mdl-typography--display-1 mdl-typography--text-center">You need to hire (create) staff</h6>
+                            {% endif %}
                         </div>
 
                     </div>

@@ -2,41 +2,65 @@
 <html lang="en">
 <head>
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/material.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/mycss.css') }}">
-    <script type="text/javascript" src="{{ url_for('static',filename='css/material.min.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='stylesheets/material.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='stylesheets/mycss.css') }}">
+    <script type="text/javascript" src="{{ url_for('static',filename='stylesheets/material.min.js') }}"></script>
+
+    <script type="text/javascript" src="{{ url_for('static',filename='stylesheets/splash.js') }}"></script>
+
 
     <meta charset="UTF-8">
     <title>Login</title>
 </head>
-<body class="mdl-color--green-100">
+<body class="mdl-color--teal-100">
 
-    <div class="mdl-grid">
+    <div class="mdl-grid center-items">
         <div class="mdl-cell mdl-cell--4-col"></div>
         <div class="mdl-cell mdl-cell--4-col  mdl-typography--text-center">
-            <div class="mdl-card mdl-shadow--3dp">
-                <form action="" method="post">
-                    <h3 id="login-banner" class="mdl-typography--display-2 mdl-color--primary mdl-color-text--white">
-                        Cater Gator Login
-                    </h3>
+            <div class="mdl-grid center-items">
+                <div class="mdl-card mdl-shadow--3dp">
+                    <form action="" method="post">
+                        <h3 id="login-banner" class="mdl-typography--display-2 mdl-color--primary mdl-color-text--white">
+                            Cater Gator Login
+                        </h3>
 
-                    <div id="login-container">
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
-                            <input class="mdl-textfield__input" type="text" id="username" name="username">
-                            <label class="mdl-textfield__label" for="sample3">Username</label>
+                        <div id="login-container">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="text" id="username" name="username">
+                                <label class="mdl-textfield__label" for="username">Username</label>
+                            </div>
+
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
+                                <input class="mdl-textfield__input" type="password" id="password" name="password">
+                                <label class="mdl-textfield__label" for="password">Password</label>
+                            </div>
+
+                            <div id="input_name" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label hidden">
+                                <input class="mdl-textfield__input" type="password" id="name" name="name">
+                                <label class="mdl-textfield__label" for="name">Name</label>
+                            </div>
                         </div>
 
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label ">
-                            <input class="mdl-textfield__input" type="password" id="password" name="password">
-                            <label class="mdl-textfield__label" for="sample3">Password</label>
-                        </div>
-                    </div>
+                        {% if error %}
+                            <h6 class="error-message">{{ error }}</h6>
+                        {% endif %}
 
-                    <div class="mdl-grid" style="float: right">
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-color--white login-btn">Sign In</button>
-                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored login-btn">Sign Up</button>
-                    </div>
-                </form>
+
+                        <button id="btn_login" formaction="/login" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Sign In</button>
+                        <button id="btn_signup" formaction="/signup" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored hidden">Sign Up</button>
+
+                        <div class="mdl-grid center-items switch_holder">
+                            <div class="mdl-typography--text-center">
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect " for="switch-config">
+                                    <input type="checkbox" id="switch-config" class="mdl-switch__input">
+                                    <span class="mdl-switch__label"></span>
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
             </div>
         </div>
         <div class="mdl-cell mdl-cell--4-col"></div>
