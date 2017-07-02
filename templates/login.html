@@ -25,6 +25,11 @@
                         </h3>
 
                         <div id="login-container">
+                            <div id="input_name" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label hidden">
+                                <input class="mdl-textfield__input" type="text" id="name" name="name">
+                                <label class="mdl-textfield__label" for="name">Name</label>
+                            </div>
+
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                                 <input class="mdl-textfield__input" type="text" id="username" name="username">
                                 <label class="mdl-textfield__label" for="username">Username</label>
@@ -34,16 +39,17 @@
                                 <input class="mdl-textfield__input" type="password" id="password" name="password">
                                 <label class="mdl-textfield__label" for="password">Password</label>
                             </div>
-
-                            <div id="input_name" class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label hidden">
-                                <input class="mdl-textfield__input" type="password" id="name" name="name">
-                                <label class="mdl-textfield__label" for="name">Name</label>
-                            </div>
                         </div>
 
-                        {% if error %}
-                            <h6 class="error-message">{{ error }}</h6>
-                        {% endif %}
+                         {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <ul class=flashes style="padding: 10px;">
+                                {% for message in messages %}
+                                    <h6 class="error-message">{{ message }}</h6>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
 
 
                         <button id="btn_login" formaction="/login" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Sign In</button>

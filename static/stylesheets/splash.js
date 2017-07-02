@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
             btn_sign_in.classList.add("hidden");
             name_field.classList.remove("hidden");
             btn_sign_up.classList.remove("hidden");
+
             pos = 1;
         }
         else {

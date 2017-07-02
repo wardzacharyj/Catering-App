@@ -7,7 +7,7 @@
 
         <!-- JS Resources -->
         <script type="text/javascript" src="{{ url_for('static', filename='stylesheets/material.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static',filename='stylesheets/splash.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='stylesheets/dash.js') }}"></script>
 
 
         <!-- Material Design icon font -->
@@ -46,25 +46,23 @@
                     {% if "Owner" in info.user_type %}
                         <!-- Owner -->
                         <!-- card for new staff creation above list of staff -->
-                        <a class="mdl-navigation__link" href="">Staff</a>
+                        <a id="btn_owner_staff" class="mdl-navigation__link">Staff</a>
 
                         <!-- one card for pending work events and one for assigned events -->
-                        <a class="mdl-navigation__link" href="">Events</a>
+                        <a id="btn_owner_events" class="mdl-navigation__link">Events</a>
 
                     {% elif "Staff" in info.user_type%}
                         <!-- Staff -->
-                        <!-- card for Events signed up for -->
-                        <a class="mdl-navigation__link" href="">Assigned Events</a>
-
                         <!-- Card for Events that they could sign up for -->
-                        <a class="mdl-navigation__link" href="">Open Events</a>
+                        <!-- Card for Events signed up for -->
+                        <a class="mdl-navigation__link" href="">My Events</a>
+
                     {% else %}
                         <!-- Customers -->
-                        <!-- button for canceling event -->
-                        <a class="mdl-navigation__link" href="">Create Event</a>
-
                         <!-- My events -->
+                        <!-- button for canceling event -->
                         <a class="mdl-navigation__link" href="">My Events</a>
+
                     {% endif %}
                 </nav>
             </div>
@@ -72,7 +70,10 @@
 
             <!-- Content Holder -->
             <main class="mdl-layout__content">
-                <div class="mdl-grid max-width mdl-color--white mdl-shadow--2dp">
+
+                <!-- Owner's Staff Entry Form -->
+                {% if "Owner" in info.user_type %}
+                <div id="owner_staff_entry" class="mdl-grid max-width mdl-color--white mdl-shadow--2dp">
                     <form action="/create_new_staff" class="max-width" method="post">
 
                         <h3 class="mdl-card__title">New Staff Entry</h3>
@@ -118,62 +119,300 @@
                         </div>
 
                     </form>
-
                 </div>
+                {% endif %}
+
+                <!-- Customer Event Entry Form -->
+                {% if "Customer" in info.user_type %}
+                <div id="customer_event_entry" class="mdl-grid max-width mdl-color--white mdl-shadow--2dp">
+                    <form action="/create_event" class="max-width" method="post">
+
+                        <h3 class="mdl-card__title">Create A New Event</h3>
+
+                        <div class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--6-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="event_name" name="event_name">
+                                    <label class="mdl-textfield__label" for="event_name">Name</label>
+                                </div>
+                            </div>
+                            <div class="mdl-cell mdl-cell--6-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="event_place" name="event_place">
+                                    <label class="mdl-textfield__label" for="event_place">Place</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mdl-grid">
+                            <div class="mdl-cell mdl-cell--6-col"></div>
+                            <div class="mdl-cell mdl-cell--6-col">
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="event_date" name="event_date" pattern="(0\d{1}|1[0-2])\/([0-2]\d{1}|3[0-1])\/(19|20)\d{2}">
+                                    <label class="mdl-textfield__label" for="event_date">Date</label>
+                                    <span class="mdl-textfield__error">Please format the date correctly MM/DD/YYYY</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                <ul class=flashes>
+                                {% for message in messages %}
+                                    <li><h6 class="error-message">{{ message }}</h6></li>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endwith %}
+
+
+                        <div class="mdl-grid" style="float: right; margin-right: 128px;">
+                            <button formaction="/create_event" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">Create</button>
+                        </div>
+
+                    </form>
+                </div>
+                {% endif %}
+
+
+
+                <!-- Primary Content Holder -->
                 <div class="page-content mdl-grid center-items">
-
-                    <!-- Page Offset -->
                     <div class="mdl-cell mdl-cell--1-col "></div>
-
-                    <!-- Main Content -->
                     <div class="mdl-cell mdl-cell--10-col">
 
-                        <!-- Centered Card Content -->
-                        <div class="mdl-card mdl-shadow--2dp fill-parent">
+                        <!-- ================================================================================== -->
 
-                            <!-- Owner Staff List -->
+                        {% if info.user_type == "Owner" %}
+
+                            <!-- Owner's  Staff List -->
                             {% if info['staff_list'] %}
+                            <div id="owner_staff_list" class="mdl-card mdl-shadow--2dp fill-parent">
+                                <h4 class="mdl-card__title" style="font-weight: 300; justify-content: center;">Current Staff</h4>
                                 <ul class="mdl-list" style="margin-bottom: 0px; padding-bottom: 0">
-
-                                    {% for staff in info['staff_list'] %}
-                                        <li class="mdl-list__item" style="padding: 24px">
-                                            <div>
-                                                <span class="mdl-list__item-primary-content">
-                                                    <i class="material-icons  mdl-list__item-avatar">person</i>
-                                                    <h5 class="name-offset">{{ staff['name'] }}</h5>
-                                                </span>
-                                                <span class="mdl-list__item-text-body">
-                                                    <div class="mdl-grid--no-spacing">
-                                                        <div style="padding-left: 52px"class="mdl-cell mdl-cell--12-col">
-                                                            <h6 class="mdl-typography--body-2">
-                                                                Username:
-                                                                <span class="staff-private-field">{{ staff['username'] }}</span>
-                                                            </h6>
-                                                            <h6 class="mdl-typography--body-2">
-                                                                Password:
-                                                                <span class="staff-private-field">{{ staff['password'] }}</span>
-                                                            </h6>
-                                                        </div>
+                                {% for staff in info['staff_list'] %}
+                                    <li class="mdl-list__item" style="padding: 24px">
+                                        <div>
+                                            <span class="mdl-list__item-primary-content">
+                                                <i class="material-icons  mdl-list__item-avatar">person</i>
+                                                <h5 class="name-offset">{{ staff['name'] }}</h5>
+                                            </span>
+                                            <span class="mdl-list__item-text-body">
+                                                <div class="mdl-grid--no-spacing">
+                                                    <div style="padding-left: 52px"class="mdl-cell mdl-cell--12-col">
+                                                        <h6 class="mdl-typography--body-2">
+                                                            Username:
+                                                            <span class="staff-private-field">{{ staff['username'] }}</span>
+                                                        </h6>
+                                                        <h6 class="mdl-typography--body-2">
+                                                            Password:
+                                                            <span class="staff-private-field">{{ staff['password'] }}</span>
+                                                        </h6>
                                                     </div>
-                                                </span>
-                                            </div>
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </li>
+                                    {% if info['staff_list'][-1] != staff  %}
+                                    <hr>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            </div>
+                            {% else %}
+                            <div id="owner_staff_list" class="mdl-card mdl-shadow--2dp fill-parent">
+                                <h6 style="padding-top: 55px; font-size: 16px;" class="mdl-typography--display-1 mdl-typography--text-center">You need to hire (create) staff</h6>
+                            </div>
+                            {% endif %}
+
+                            <!-- Owner's Events with no Staff -->
+                            {% if info['events_no_staff'] %}
+                            <div id="owner_events_no_staff" class="mdl-card mdl-shadow--2dp fill-parent hidden">
+                                <h4 class="mdl-card__title" style="font-weight: 300; justify-content: center;">Events That Need Staff</h4>
+                                <ul class="mdl-list" style="margin-bottom: 0px; padding-bottom: 0">
+                                {% for event in info['events_no_staff'] %}
+                                    <li class="mdl-list__item mdl-list__item--two-line">
+                                        <span class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-avatar">small_mall_directory</i>
+                                            <span>{{ event['event_name'] }}</span>
+                                            <span class="mdl-list__item-sub-title">{{ event['event_location'] }} • {{ event['event_date'] }}</span>
+                                        </span>
+                                    </li>
+
+                                    {% if info['events_no_staff'][-1] != event  %}
+                                    <hr>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            </div>
+                            {% else %}
+                            <div id="owner_events_no_staff" class="mdl-card mdl-shadow--2dp fill-parent hidden">
+                                <h4 class="mdl-card__title" style="font-weight: 300; justify-content: center;">Events That Need Staff</h4>
+                                <h6 style="padding-top: 55px; font-size: 16px;" class="mdl-typography--display-1 mdl-typography--text-center">There are no events without staff assigned at the moment</h6>
+                            </div>
+                            {% endif %}
+
+                        {% endif %}
+
+                        <!-- ================================================================================== -->
+
+                        <!-- Staff My Events -->
+                        {% if "Staff" == info.user_type %}
+                            {% if info['my_events'] %}
+                            <div id="staff_my_events" class="mdl-card mdl-shadow--2dp fill-parent">
+                                <h4 class="mdl-card__title" style="font-weight: 300">Unfilled Events</h4>
+                                <ul class="mdl-list" style="margin-bottom: 0px; padding-bottom: 0">
+                                {% for event in info['my_events'] %}
+                                    <li class="mdl-list__item mdl-list__item--two-line">
+                                        <span class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-avatar">small_mall_directory</i>
+                                            <span>{{ event['name'] }}</span>
+                                            <span class="mdl-list__item-sub-title">{{ event['place'] }}</span>
+                                        </span>
+                                        <span class="mdl-list__item-secondary-content">
+                                            <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">cancel</i></a>
+                                        </span>
+                                    </li>
+                                    {% if info['my_events'][-1] != event  %}
+                                    <hr>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            </div>
+                            {% else %}
+                            <div id="staff_my_events" class="mdl-card mdl-shadow--2dp fill-parent">
+                            <h6 style="padding-top: 55px; font-size: 16px;" class="mdl-typography--display-1 mdl-typography--text-center">You have not signed up for any events yet</h6>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+
+                        <!-- ================================================================================== -->
+
+
+                        <!-- Customer Event List -->
+                        {% if info.user_type == "Customer" %}
+                            {% if info['my_reservations'] %}
+                            <div id="customer_events" class="mdl-card mdl-shadow--2dp fill-parent">
+                                    <h4 class="mdl-card__title" style="font-weight: 300">Your Events</h4>
+                                    <ul class="mdl-list" style="margin-bottom: 0px; padding-bottom: 0">
+                                    {% for event in info['my_reservations'] %}
+                                        <li class="mdl-list__item mdl-list__item--two-line">
+                                            <span class="mdl-list__item-primary-content">
+                                                <i class="material-icons mdl-list__item-avatar">small_mall_directory</i>
+                                                <span>{{ event['event_name'] }}</span>
+                                                <span class="mdl-list__item-sub-title">{{ event['event_location'] }}•{{ event['event_date'] }}</span>
+                                            </span>
+                                            <span class="mdl-list__item-secondary-content">
+                                                <a class="mdl-list__item-secondary-action" href="/cancel_event/{{ loop.index0 }}"><i class="material-icons" style="color: gray">delete</i></a>
+                                            </span>
                                         </li>
-                                        {% if info['staff_list'][-1] != staff  %}
+                                        {% if info['my_reservations'][-1] != event %}
                                         <hr>
                                         {% endif %}
                                     {% endfor %}
-                                </ul>
+                                    </ul>
+                                </div>
                             {% else %}
-                                <h6 style="padding-top: 55px; font-size: 16px;" class="mdl-typography--display-1 mdl-typography--text-center">You need to hire (create) staff</h6>
+                            <div id="customer_events" class="mdl-card mdl-shadow--2dp fill-parent">
+                                <h6 style="padding-top: 55px; font-size: 16px;" class="mdl-typography--display-1 mdl-typography--text-center">Your have't scheduled any events yet</h6>
+                            </div>
                             {% endif %}
-                        </div>
+                        {% endif %}
+
 
                     </div>
-
-                    <!-- Page Offset -->
                     <div class="mdl-cell mdl-cell--1-col "></div>
-
                 </div>
+
+                <!-- Secondary Content Holder -->
+                <div class="mdl-grid center-items">
+                    <div class="mdl-cell mdl-cell--1-col"></div>
+                    <div class="mdl-cell mdl-cell--10-col">
+
+                        <!-- ================================================================================== -->
+
+                        <!-- Owner's Events With Assigned Staff  -->
+                        {% if "Owner" == info.user_type %}
+                            {% if info['events_with_staff'] %}
+                            <div id="owner_events_with_staff" class="mdl-card mdl-shadow--2dp fill-parent hidden">
+                                <h4 class="mdl-card__title" style="font-weight: 300; justify-content: center">Events with staff</h4>
+                                <ul class="mdl-list" style="margin-bottom: 0px; padding-bottom: 0">
+                                {% for event in info['events_with_staff'] %}
+                                    <li class="mdl-list__item mdl-list__item--two-line">
+                                        <span class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-avatar">small_mall_directory</i>
+                                            <span>{{ event['event_name'] }}</span>
+                                            <span class="mdl-list__item-sub-title">{{ event['event_location'] }} • {{ event['event_date'] }}</span>
+                                        </span>
+                                    </li>
+
+                                     {% if event['staff_id_1'] %}
+                                        <li>{{ event['staff_id_1'] }}</li>
+                                    {% endif %}
+
+                                    {% if event['staff_id_2'] %}
+                                        <li>{{ event['staff_id_2'] }}</li>
+                                    {% endif %}
+
+                                    {% if event['staff_id_3'] %}
+                                        <li>{{ event['staff_id_3'] }}</li>
+                                    {% endif %}
+
+                                    {% if event['staff_id_4'] %}
+                                        <li>{{ event['staff_id_4'] }}</li>
+                                    {% endif %}
+
+                                    {% if info['events_with_staff'][-1] != event  %}
+                                    <hr>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            </div>
+                            {% else %}
+                            <div id="owner_events_with_staff" class="mdl-card mdl-shadow--2dp fill-parent hidden">
+                                <h4 class="mdl-card__title" style="font-weight: 300; justify-content: center">Events with staff</h4>
+                                <h6 style="padding-top: 55px; font-size: 16px;" class="mdl-typography--display-1 mdl-typography--text-center">There are no events with staff assigned</h6>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+
+                        <!-- ================================================================================== -->
+
+                        <!-- Staff Open Events -->
+                        {% if "Staff" == info.user_type %}
+                            {% if info['open_events'] %}
+                            <div id="staff_open_events" class="mdl-card mdl-shadow--2dp fill-parent">
+                                <h4 class="mdl-card__title" style="font-weight: 300">Unfilled Events</h4>
+                                <ul class="mdl-list" style="margin-bottom: 0px; padding-bottom: 0">
+                                {% for event in info['open_events'] %}
+                                    <li class="mdl-list__item mdl-list__item--two-line">
+                                        <span class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-avatar">small_mall_directory</i>
+                                            <span>{{ event['name'] }}</span>
+                                            <span class="mdl-list__item-sub-title">{{ event['place'] }}</span>
+                                        </span>
+                                        <span class="mdl-list__item-secondary-content">
+                                            <a class="mdl-list__item-secondary-action" href="#"><i class="material-icons">add box</i></a>
+                                        </span>
+                                    </li>
+                                    {% if info['open_events'][-1] != event  %}
+                                    <hr>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            </div>
+                            {% else %}
+                            <div id="staff_open_events" class="mdl-card mdl-shadow--2dp fill-parent">
+                            <h6 style="padding-top: 55px; font-size: 16px;" class="mdl-typography--display-1 mdl-typography--text-center">There are no events without staff at the moment</h6>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+
+
+                    </div>
+                    <div class="mdl-cell mdl-cell--1-col"></div>
+                </div>
+
             </main>
 
         </div>
