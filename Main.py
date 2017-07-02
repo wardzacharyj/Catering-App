@@ -113,10 +113,7 @@ def initdb_command():
 def build_user_object(o_id, name, user_type):
 
     user_info = {'user_type': user_type, 'name': 'Owner'}
-    print("BUILDING USER OBJECTS %r %r %r" % (o_id, name, user_type))
     if user_type == 'Owner':
-        print("IN OWNER")
-
         # Save Owner Name
         user_info['name'] = 'Owner'
 
@@ -133,11 +130,11 @@ def build_user_object(o_id, name, user_type):
             s2 = Staff.query.filter_by(id=e['staff_id_2']).first()
             s3 = Staff.query.filter_by(id=e['staff_id_3']).first()
             if s1:
-                e.staff_id_1 = s1['name']
+                e['staff_id_1'] = s1.name
             if s2:
-                e.staff_id_2 = s2['name']
+                e['staff_id_2'] = s2.name
             if s3:
-                e.staff_id_3 = s3['name']
+                e['staff_id_3'] = s3.name
 
         user_info['events_with_staff'] = e_with_staff
 
@@ -158,8 +155,6 @@ def build_user_object(o_id, name, user_type):
                 e.staff_id_3 = s3['name']
 
         user_info['events_no_staff'] = e_no_staff
-
-
     elif user_type == "Staff":
         # Save Staff Name
         user_info['id'] = o_id
@@ -169,27 +164,57 @@ def build_user_object(o_id, name, user_type):
         # All Events signed up for
         m_event = [event.as_dict() for event in Event.query.filter(
             or_(
-                Event.staff_id_1 == o_id, Event.staff_id_2 == o_id, Event.staff_id_3 == o_id)).all()]
+                Event.staff_id_1 == user_info['id'], Event.staff_id_2 == user_info['id'],
+                Event.staff_id_3 == user_info['id'])).all()]
 
         for e in m_event:
-            e.staff_id_1 = (Staff.query.filter_by(id=e.staff_id_1).first()).name
-            e.staff_id_2 = (Staff.query.filter_by(id=e.staff_id_2).first()).name
-            e.staff_id_3 = (Staff.query.filter_by(id=e.staff_id_3).first()).name
+            print()
+            try:
+                e['staff_id_1'] = ((Staff.query.filter_by(id=e['staff_id_1']).first()).as_dict())['name']
+            except AttributeError:
+                pass
+
+            try:
+                e['staff_id_2'] = ((Staff.query.filter_by(id=e['staff_id_2']).first()).as_dict())['name']
+            except AttributeError:
+                pass
+
+            try:
+                e['staff_id_3'] = ((Staff.query.filter_by(id=e['staff_id_3']).first()).as_dict())['name']
+            except AttributeError:
+                pass
 
         user_info['my_events'] = m_event
+        print(m_event)
 
         # All Events with at least 1 empty staff
-        o_event = [event.as_dict() for event in Event.query.filter(
-            or_(Event.staff_id_1.is_(None), Event.staff_id_2.is_(None), Event.staff_id_3.is_(None))).all()]
+        pre_query = Event.query.filter(or_(Event.staff_id_1.is_(None),
+                                           Event.staff_id_2.is_(None), Event.staff_id_3.is_(None))).all()
+        filtered_list = []
+        for e in pre_query:
+            if e.staff_id_1 != o_id and e.staff_id_2 != o_id and e.staff_id_3 != o_id:
+                s1 = Staff.query.filter_by(id=e.staff_id_1).first()
+                s2 = Staff.query.filter_by(id=e.staff_id_2).first()
+                s3 = Staff.query.filter_by(id=e.staff_id_3).first()
+                if s1:
+                    e.staff_id_1 = s1.name
+                if s2:
+                    e.staff_id_2 = s2.name
+                if s3:
+                    e.staff_id_3 = s3.name
+                filtered_list.append(e)
+
+        o_event = [event.as_dict() for event in filtered_list]
 
         user_info['open_events'] = o_event
+        print(o_event)
+
     else:
         # Save Name
         user_info['id'] = o_id
         user_info['name'] = name
 
         # All Events scheduled
-        # [staff.as_dict() for staff in Staff.query.order_by(Staff.name).all()]
         my_res = [event.as_dict() for event in Event.query.filter_by(customer_id=o_id).all()]
         print(my_res)
         for e in my_res:
@@ -197,11 +222,11 @@ def build_user_object(o_id, name, user_type):
             s2 = Staff.query.filter_by(id=e['staff_id_2']).first()
             s3 = Staff.query.filter_by(id=e['staff_id_3']).first()
             if s1:
-                e.staff_id_1 = s1['name']
+                e['staff_id_1'] = s1.name
             if s2:
-                e.staff_id_2 = s2['name']
+                e['staff_id_2'] = s2.name
             if s3:
-                e.staff_id_3 = s3['name']
+                e['staff_id_3'] = s3.name
 
         user_info['my_reservations'] = my_res
 
@@ -256,38 +281,56 @@ def create_new_staff():
 
 
 # For Staff
-@app.route('/sign_up_for_event', methods=["POST"])
-def sign_up_for_event():
-    staff_id = request.form['staff_id']
-    event_id = request.form['event_id']
+@app.route('/unsubscribe_for_event/<event_index>')
+def unsubscribe_for_event(event_index):
 
-    # Check if form is valid
-    if (len(staff_id) > 0) and (len(event_id) > 0):
-        event = Event.query.filter_by(id=event_id).first()
+    event_id = session['info']['my_events'][int(event_index)]['id']
+    event = Event.query.filter_by(id=event_id).first()
+    print(event.as_dict())
 
-        # Check if Event exists
-        if event is not None:
-            # Try to assign
-            if event.staff_id_1 is None:
-                event.staff_id_1 = staff_id
-                db.session.commit()
-            elif event.staff_id_2 is None:
-                event.staff_id_2 = staff_id
-                db.session.commit()
-            elif event.staff_id_3 is None:
-                event.staff_id_3 = staff_id
-                db.session.commit()
-            else:
-                print("That event is already fully scheduled")
+    # Check if Event exists
+    if event:
+        if event.staff_id_1 == session['info']['id']:
+            event.staff_id_1 = None
+            db.session.commit()
+        elif event.staff_id_2 == session['info']['id']:
+            event.staff_id_2 = None
+            db.session.commit()
+        elif event.staff_id_3 == session['info']['id']:
+            event.staff_id_3 = None
+            db.session.commit()
         else:
-            print("Invalid Signup: Event ID was not found")
+            print("Error with staff id")
 
-        print("New Staff Member Added to the roster")
+    return redirect(url_for('dashboard'))
+
+
+@app.route('/sign_up_for_event/<event_index>')
+def sign_up_for_event(event_index):
+
+    event_id = session['info']['open_events'][int(event_index)]['id']
+    event = Event.query.filter_by(id=event_id).first()
+
+    # Check if Event exists
+    if event is not None:
+        if event.staff_id_1 is None:
+            event.staff_id_1 = session['info']['id']
+            db.session.add(event)
+            db.session.commit()
+        elif event.staff_id_2 is None:
+            event.staff_id_2 = session['info']['id']
+            db.session.add(event)
+            db.session.commit()
+        elif event.staff_id_3 is None:
+            event.staff_id_3 = session['info']['id']
+            db.session.add(event)
+            db.session.commit()
+        else:
+            print("That event is already fully scheduled")
     else:
-        print("Form was invalid")
+        print("Invalid Signup: Event ID was not found")
 
-    # Fix
-    return render_template('dashboard.html')
+    return redirect(url_for('dashboard'))
 
 
 # For Customer
@@ -323,22 +366,6 @@ def cancel_event(event_index):
     event = Event.query.filter_by(id=delete_event_id).first()
     db.session.delete(event)
     db.session.commit()
-    '''
-    # Check if form is valid
-    if event_id is not None:
-        event = Event.query.filter_by(id=event_id).first()
-
-        # Check if Event exists
-        if event is not None:
-            db.session.delete(event)
-            db.session.commit()
-            print("Removed the event")
-        else:
-            print("Event not found")
-    else:
-        print("Form was invalid")
-    # Fix
-    '''
     return redirect(url_for('dashboard'))
 
 
@@ -384,7 +411,7 @@ def signup():
         c = Customer.query.filter_by(username=username).first()
         if c:
             flash('Another Customer already has that username')
-            return render_template('default')
+            return render_template('login.html')
         else:
             customer = Customer(name, username, password)
             db.session.add(customer)

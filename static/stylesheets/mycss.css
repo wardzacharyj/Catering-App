@@ -3,6 +3,20 @@
     width: 100%;
 }
 
+.sub-staff{
+    padding-left: 56px;
+    padding-top: 0;
+}
+
+.sub-staff  i{
+    padding-left: 16px;
+    vertical-align: middle;
+}
+
+.sub-staff span{
+    vertical-align: middle;
+}
+
 #login-banner{
     margin: 0;
     padding-top: 32px;

@@ -11,39 +11,42 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var owner_events_no_staff = document.getElementById('owner_events_no_staff');
     var owner_events_with_staff = document.getElementById('owner_events_with_staff');
 
-    var ownerState = 0;
-    btn_owner_staff.addEventListener("click",function(){
+    if(btn_owner_staff != null && btn_owner_events != null){
+        var ownerState = 0;
+        btn_owner_staff.addEventListener("click",function(){
 
-        if(ownerState == 1){
-            ownerState = 0;
+            if(ownerState == 1){
+                ownerState = 0;
 
-            console.log('Hide Events and Show Staff');
+                console.log('Hide Events and Show Staff');
 
-            owner_events_no_staff.classList.add('hidden');
-            owner_events_with_staff.classList.add('hidden');
+                owner_events_no_staff.classList.add('hidden');
+                owner_events_with_staff.classList.add('hidden');
 
-            owner_staff_entry.classList.remove('hidden');
-            owner_staff_list.classList.remove('hidden');
+                owner_staff_entry.classList.remove('hidden');
+                owner_staff_list.classList.remove('hidden');
 
-        }
-    });
+            }
+        });
 
-    btn_owner_events.addEventListener("click",function(){
+        btn_owner_events.addEventListener("click",function(){
 
-        if(ownerState == 0){
-            ownerState = 1;
+            if(ownerState == 0){
+                ownerState = 1;
 
-            console.log('Hide Staff and Show Events');
+                console.log('Hide Staff and Show Events');
 
-            owner_staff_entry.classList.add('hidden');
-            owner_staff_list.classList.add('hidden');
+                owner_staff_entry.classList.add('hidden');
+                owner_staff_list.classList.add('hidden');
 
-            owner_events_no_staff.classList.remove("hidden");
-            owner_events_with_staff.classList.remove("hidden");
+                owner_events_no_staff.classList.remove("hidden");
+                owner_events_with_staff.classList.remove("hidden");
 
 
-        }
-    });
+            }
+        });
+    }
+
 
 
 
