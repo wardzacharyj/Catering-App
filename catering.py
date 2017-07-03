@@ -91,8 +91,7 @@ class Event(db.Model):
             "staff_id_3": self.staff_id_3,
             "event_name": self.event_name,
             "event_location": self.event_location,
-            "event_date": self.event_date,
-
+            "event_date": self.event_date
         }
 
 
@@ -167,7 +166,6 @@ def build_user_object(o_id, name, user_type):
                 Event.staff_id_3 == user_info['id'])).all()]
 
         for e in m_event:
-            print()
             try:
                 e['staff_id_1'] = ((Staff.query.filter_by(id=e['staff_id_1']).first()).as_dict())['name']
             except AttributeError:
@@ -254,7 +252,6 @@ def get_user(n, p):
 # For Owner
 @app.route('/create_new_staff', methods=["POST"])
 def create_new_staff():
-    print('Trying to create staff')
 
     n = request.form['staff_name']
     u = request.form['staff_username']
@@ -300,7 +297,7 @@ def unsubscribe_for_event(event_index):
             event.staff_id_3 = None
             db.session.commit()
         else:
-            print("Error with staff id")
+            flash("Error with staff id")
 
     return redirect(url_for('dashboard'))
 
@@ -326,9 +323,9 @@ def sign_up_for_event(event_index):
             db.session.add(event)
             db.session.commit()
         else:
-            print("That event is already fully scheduled")
+            flash("That event is already fully scheduled")
     else:
-        print("Invalid Signup: Event ID was not found")
+        flash("Invalid Signup: Event ID was not found")
 
     return redirect(url_for('dashboard'))
 
@@ -381,7 +378,6 @@ def default():
 
 @app.route('/login', methods=["GET", "POST"])
 def sign_in():
-    print("SIGN_IN")
     if request.method == 'GET':
         return redirect(url_for('default'))
 
@@ -390,14 +386,12 @@ def sign_in():
         session["info"] = auth
         return redirect(url_for("dashboard"))
     else:
-        print('Invalid Credentials')
         flash('Sorry Invalid Credentials')
         return render_template('login.html')
 
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
-    print("SIGN_UP")
     if request.method == 'GET':
         return redirect(url_for('default'))
 
@@ -439,7 +433,6 @@ def dashboard():
 
         return render_template('dashboard.html', info=session['info'])
     else:
-        print("Not Logged in")
         return redirect(url_for("default"))
 
 
