@@ -6,46 +6,92 @@ You must submit an information sheet with every assignment. Also be sure
 to submit all materials following the procedures described on the
 submission procedures page.
 
-Name:  
+Name:  Zach Ward
 
-Lecture section:  
+Lecture section:  MW 2:30
 
-Recitation day and time:  
+Recitation day and time:  M 4:30
 
-Assignment #:  
+Assignment #:  2
 
-Program due date:  
+Program due date:  July 3
 
-Handed in date:  
+Handed in date:  July 2
 
 Source code file name(s):
 
+catering.py
+    - Holds all logic for interacting with the model and routes
 
+login.html
+    - This page is used for sign in and signup portions of the requirements.
+      You can switch between sign in and sign up using the switch
 
-
-
+dashboard.html
+    - This page is used for rendering specific information about each user
 
 
 Other file name(s) (if relevant):
 
+Material design css framework
 
+mycss.css
+    - all custom css styling
 
+splash.js
+    - custom js for handling dom switching for login/signup page
 
-
+dash.js
+    - customj js for handling dom switching for specific user types
 
 
 Does your project run without error?:
 
+Yes I didn't encounter any errors during testing
+
+
 If not, what is/are the error(s) and which parts of your program run
 correctly?:
 
-
-
-
-
-
+No errors I hope
 
 Additional comments to the grader:
+
+Owner login set correctly:
+    - Signup and Create Staff should prevent duplicate usernames including the username 'owner'
+    - To switch to signup mode use the toggle at the bottom of the form
+    - Staff can only be created by the owner account
+
+Customer registration:
+    - Customers can be created on the toggled login page
+
+Staff account creation:
+    - Only available via the owner panel
+
+Login works appropriately:
+    - Was not sure what appropriately
+
+Logout always available and works:
+    - Located in right top corner
+
+Owner page displays as specified:
+    - Drawer on the left lets you switch between all events and all staff information
+
+Staff page displays as specified:
+    - Events the staff member sign
+
+Staff work sign up works:
+    - You can signup for events by clicking the plus button on the list item
+
+Customer page displays as specified:
+    - Entry form for customer is displayed above customers scheduled events
+
+Customer create event works:
+    - Entry form for customer will append to customers sccheduled events list displayed below form
+
+Customer cancel event works:
+    - Clicking the trash can will remove event
+
 
 
 

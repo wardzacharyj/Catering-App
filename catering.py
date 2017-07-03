@@ -4,10 +4,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import and_
 from sqlalchemy import or_
 
-# from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cater.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///catering.db'
 db = SQLAlchemy(app)
 
 ###########################################################################################
@@ -185,7 +184,6 @@ def build_user_object(o_id, name, user_type):
                 pass
 
         user_info['my_events'] = m_event
-        print(m_event)
 
         # All Events with at least 1 empty staff
         pre_query = Event.query.filter(or_(Event.staff_id_1.is_(None),
@@ -207,8 +205,6 @@ def build_user_object(o_id, name, user_type):
         o_event = [event.as_dict() for event in filtered_list]
 
         user_info['open_events'] = o_event
-        print(o_event)
-
     else:
         # Save Name
         user_info['id'] = o_id
@@ -216,7 +212,7 @@ def build_user_object(o_id, name, user_type):
 
         # All Events scheduled
         my_res = [event.as_dict() for event in Event.query.filter_by(customer_id=o_id).all()]
-        print(my_res)
+
         for e in my_res:
             s1 = Staff.query.filter_by(id=e['staff_id_1']).first()
             s2 = Staff.query.filter_by(id=e['staff_id_2']).first()
@@ -236,19 +232,16 @@ def build_user_object(o_id, name, user_type):
 def get_user(n, p):
     # Owner
     if n == 'owner' and p == 'pass':
-        print("Building Owner Object")
         return build_user_object(None, 'Owner', 'Owner')
     else:
         # Customer
         customer = Customer.query.filter(and_(Customer.username == n, Customer.password == p)).first()
         if customer:
-            print("Building Customer Object")
             return build_user_object(customer.id, customer.name, 'Customer')
         else:
             # Staff
             staff = Staff.query.filter(and_(Staff.username == n, Staff.password == p)).first()
             if staff:
-                print("Building Staff Object")
                 return build_user_object(staff.id, staff.name, 'Staff')
 
     return None
@@ -267,17 +260,25 @@ def create_new_staff():
     u = request.form['staff_username']
     p = request.form['staff_password']
 
+    if u == 'owner':
+        flash('Sorry a user with that username already exists')
+        return redirect(url_for('dashboard'))
+
     if (len(n) > 0) and (len(u) > 0) and (len(p) > 0):
         try:
             new_staff = Staff(n, u, p)
-            db.session.add(new_staff)
-            db.session.commit()
+            user = Customer.query.filter_by(username=n).first()
+            if user:
+                flash('Sorry a user with that username already exists')
+            else:
+                db.session.add(new_staff)
+                db.session.commit()
         except IntegrityError:
             flash('Sorry a user with that username already exists')
-            return redirect(url_for("dashboard"))
     else:
         flash('Make sure you fill out the entire form')
-        return redirect(url_for("dashboard"))
+
+    return redirect(url_for("dashboard"))
 
 
 # For Staff
@@ -286,7 +287,6 @@ def unsubscribe_for_event(event_index):
 
     event_id = session['info']['my_events'][int(event_index)]['id']
     event = Event.query.filter_by(id=event_id).first()
-    print(event.as_dict())
 
     # Check if Event exists
     if event:
@@ -347,7 +347,6 @@ def create_event():
             flash('Sorry there is already an event scheduled for that day')
             return redirect(url_for('dashboard'))
         else:
-            print(session['info'])
             event = Event(session['info']['id'], name, place, date)
             db.session.add(event)
             db.session.commit()
@@ -355,13 +354,12 @@ def create_event():
 
     else:
         flash('The form was filled out incorrectly, please be careful to fill all the fields')
-        return redirect(url_for('dashboard.html'))
+        return redirect(url_for('dashboard'))
 
 
 # For Customer
 @app.route('/cancel_event/<event_index>')
 def cancel_event(event_index):
-    print('Cancel Event Session: %r' % (session['info']))
     delete_event_id = session['info']['my_reservations'][int(event_index)]['id']
     event = Event.query.filter_by(id=delete_event_id).first()
     db.session.delete(event)
@@ -407,9 +405,14 @@ def signup():
     username = request.form['username']
     password = request.form['password']
 
+    if username == "owner":
+        flash('That username is already taken')
+        return render_template('login.html')
+
     if (len(name) > 0) and (len(username) > 0) and (len(password) > 0):
         c = Customer.query.filter_by(username=username).first()
-        if c:
+        s = Staff.query.filter_by(username=username).first()
+        if c or s:
             flash('Another Customer already has that username')
             return render_template('login.html')
         else:
@@ -417,7 +420,6 @@ def signup():
             db.session.add(customer)
             db.session.commit()
             session['info'] = get_user(username, password)
-            print(session['info'])
             return redirect(url_for("dashboard"))
     else:
         flash('Please Fill out all the fields before signing up')
@@ -428,15 +430,12 @@ def signup():
 def dashboard():
     if "info" in session:
         # renew object
-        print("Already Logged in")
 
         if session['info']['user_type'] == "Owner":
             session['info'] = build_user_object(None, session['info']['name'], session['info']['user_type'])
         else:
             session["info"] = build_user_object(session['info']['id'],
                                                 session['info']['name'], session['info']['user_type'])
-
-        print('Session: %r' % (session['info']))
 
         return render_template('dashboard.html', info=session['info'])
     else:
